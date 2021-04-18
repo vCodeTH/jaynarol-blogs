@@ -1,11 +1,10 @@
 import { createMocks } from 'node-mocks-http'
-import helloApi from "../../pages/api/hello"
+import helloApi from '../../pages/api/hello'
 
-describe("/api/hello handler", () => {
-
-  test("http should be 200 + name john", async () => {
+describe('/api/hello handler', () => {
+  test('http should be 200 + name john', async () => {
     const { req, res } = createMocks({
-      method: 'GET'
+      method: 'GET',
     })
 
     await helloApi(req, res)
@@ -13,7 +12,7 @@ describe("/api/hello handler", () => {
     expect(JSON.parse(res._getData())).toEqual(
       expect.objectContaining({
         name: 'John Doe',
-      }),
+      })
     )
   })
 })

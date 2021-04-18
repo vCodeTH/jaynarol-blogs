@@ -1,4 +1,9 @@
-import { justCombineAllOfThem, justMinusAllOfThem, justMultiplyAllOfThem, justDivideAllOfThem } from '../index'
+import {
+  justCombineAllOfThem,
+  justMinusAllOfThem,
+  justMultiplyAllOfThem,
+  justDivideAllOfThem,
+} from '../index'
 
 describe('all functions', () => {
   describe('justCombineAllOfThem', () => {
@@ -10,7 +15,6 @@ describe('all functions', () => {
     })
   })
 
-
   describe('justMinusAllOfThem', () => {
     test('1-1 should be 0', () => {
       const numbers = [1, 1]
@@ -19,7 +23,6 @@ describe('all functions', () => {
       expect(justMinusAllOfThem(...numbers)).toEqual(expected)
     })
   })
-
 
   describe('justMultiplyAllOfThem', () => {
     test('2*2 should be 4', () => {
@@ -30,9 +33,7 @@ describe('all functions', () => {
     })
   })
 
-
   describe('justDivideAllOfThem', () => {
-
     test('2/2 should be 1', () => {
       const numbers = [2, 2]
       const expected = 1
