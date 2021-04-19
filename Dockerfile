@@ -6,6 +6,7 @@ ENV NODE_ENV production
 
 COPY /public ./public
 COPY /.next ./.next
+COPY /next.config.js ./next.config.js
 COPY /package-lock.json ./package-lock.json
 COPY /package.json ./package.json
 

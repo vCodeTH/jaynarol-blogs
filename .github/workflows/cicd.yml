@@ -1,4 +1,4 @@
-name: Node.js CI
+name: Next.js CI-CD
 
 on:
   push:
@@ -6,11 +6,13 @@ on:
 
 env:
   SERVICE_NAME: jaynarol-blogs
+
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-  SA_EMAIL: ${{ secrets.GKE_SA_EMAIL }}
-  SA_KEY: ${{ secrets.GKE_SA_KEY }}
+
+  GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
+  GKE_SA_EMAIL: ${{ secrets.GKE_SA_EMAIL }}
+  GKE_SA_KEY: ${{ secrets.GKE_SA_KEY }}
 
 jobs:
   CI-CD-Flow:
@@ -49,12 +51,12 @@ jobs:
         uses: google-github-actions/setup-gcloud@master
         with:
           version: '286.0.0'
-          project_id: $PROJECT_ID
-          service_account_email: $SA_EMAIL
-          service_account_key: $SA_KEY
+          project_id: ${{ env.GKE_PROJECT }}
+          service_account_email: ${{ env.GKE_SA_EMAIL }}
+          service_account_key: ${{ env.GKE_SA_KEY }}
 
       - name: Pack Artifact
         run: |-
           gcloud builds submit \
             --quiet \
-            --tag "asia.gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
+            --tag 'asia.gcr.io/${{ env.GKE_PROJECT }}/${{ env.SERVICE_NAME }}:$GITHUB_SHA'
