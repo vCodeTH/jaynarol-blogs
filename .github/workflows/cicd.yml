@@ -30,12 +30,12 @@ jobs:
         with:
           node-version: 15.x
 
-      - name: Test with Jest
+      - name: Test Source with Jest
         run: |-
           npm ci
           npm test
 
-      - name: Sonar Scan
+      - name: Scan Source with Sonar
         uses: sonarsource/sonarcloud-github-action@master
         with:
           args: >
@@ -54,15 +54,17 @@ jobs:
       - name: Pack Artifact
         run: |-
           docker build \
-                    --tag "asia.gcr.io/${{ env.GKE_PROJECT }}/${{ env.SERVICE_NAME }}:$GITHUB_SHA" \
+                    --tag asia.gcr.io/${{ env.GKE_PROJECT }}/${{ env.SERVICE_NAME }}:$GITHUB_SHA \
                     --build-arg GITHUB_SHA="$GITHUB_SHA" \
                     --build-arg GITHUB_REF="$GITHUB_REF" \
                     .
 
       - name: Scan Artifact
-        uses: Azure/container-scan@v0
+        uses: anchore/scan-action@v2
         with:
-          image-name: asia.gcr.io/${{ env.GKE_PROJECT }}/${{ env.SERVICE_NAME }}:$GITHUB_SHA
+          image: asia.gcr.io/${{ env.GKE_PROJECT }}/${{ env.SERVICE_NAME }}:$GITHUB_SHA
+          fail-build: true
+          severity-cutoff: medium
 
       - name: Connect GCP
         uses: google-github-actions/setup-gcloud@master
