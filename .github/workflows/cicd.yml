@@ -6,6 +6,8 @@ on:
 
 env:
   SERVICE_NAME: jaynarol-blogs
+  DEPLOYMENT_NAME: gke-test
+
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   PHONITO_TOKEN: ${{ secrets.PHONITO_TOKEN }}
   GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
@@ -30,7 +32,7 @@ jobs:
 
       - name: Test Source with Jest
         run: |-
-          npm ci
+          npm ci --only=production
           npm test
 
       - name: Scan Source with Sonar
@@ -78,3 +80,22 @@ jobs:
           gcloud --quiet auth configure-docker
           gcloud container clusters get-credentials "${{ env.GKE_CLUSTER }}" --zone "${{ env.GKE_ZONE }}"
           docker push ${{ steps.build.outputs.IMAGE_NAME }}
+
+      #- name: Set up Kustomize
+      #  run: |-
+      #    curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
+      #    chmod u+x ./kustomize
+
+      #- name: Connect GKE
+      #  uses: google-github-actions/get-gke-credentials@v0.2.1
+      #  with:
+      #    cluster_name: ${{ env.GKE_CLUSTER }}
+      #    location: ${{ env.GKE_ZONE }}
+      #    credentials: ${{ env.GKE_SA_KEY }
+
+      #- name: Deploy Artifact to GKE
+      #  run: |-
+      #    ./kustomize edit set image asia.gcr.io/PROJECT_ID/IMAGE:TAG=${{ steps.build.outputs.IMAGE_NAME }}
+      #    ./kustomize build . | kubectl apply -f -
+      #    kubectl rollout status deployment/$DEPLOYMENT_NAME
+      #    kubectl get services -o wide
