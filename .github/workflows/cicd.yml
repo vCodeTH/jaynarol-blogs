@@ -86,7 +86,7 @@ jobs:
         with:
           cluster_name: ${{ env.GKE_CLUSTER }}
           location: ${{ env.GKE_ZONE }}
-          credentials: ${{ env.GKE_SA_KEY }
+          credentials: ${{ env.GKE_SA_KEY }}
 
       - name: Deploy Artifact to GKE
         run: |-
