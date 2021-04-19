@@ -32,7 +32,7 @@ jobs:
 
       - name: Test Source with Jest
         run: |-
-          npm ci --only=production
+          npm ci
           npm test
 
       - name: Scan Source with Sonar
