@@ -47,15 +47,6 @@ jobs:
             -Dsonar.coverage.exclusions=**/*.tsx,**/__test__/*,**/*.test.*,*.config.{js,json}
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
 
-      - name: Connect GCP
-        uses: google-github-actions/setup-gcloud@master
-        with:
-          project_id: ${{ env.GKE_PROJECT }}
-          service_account_key: ${{ env.GKE_SA_KEY }}
-        run: |-
-          gcloud --quiet auth configure-docker
-          gcloud container clusters get-credentials "${{ env.GKE_CLUSTER }}" --zone "${{ env.GKE_ZONE }}"
-
       - name: Build NextJs
         run: |-
           npm run build
@@ -74,6 +65,14 @@ jobs:
         run: |-
           docker scan --accept-license --dependency-tree ${{ steps.pack.outputs.IMAGE_NAME }}
 
+      - name: Connect GCP
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ env.GKE_PROJECT }}
+          service_account_key: ${{ env.GKE_SA_KEY }}
+
       - name: Ship Artifact to GCR
         run: |-
+          gcloud --quiet auth configure-docker
+          gcloud container clusters get-credentials "${{ env.GKE_CLUSTER }}" --zone "${{ env.GKE_ZONE }}"
           docker push ${{ steps.pack.outputs.IMAGE_NAME }}
