@@ -5,12 +5,11 @@ on:
     branches: [ main ]
 
 env:
-  // static
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  // custom
   SERVICE_NAME: jaynarol-blogs
+
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
   GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
   GKE_SA_KEY: ${{ secrets.GKE_SA_KEY }}
   GKE_CLUSTER: ${{ secrets.GKE_CLUSTER }}
