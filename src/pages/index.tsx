@@ -11,7 +11,7 @@ const IndexPage: NextPage = () => {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
+          Welcome to <a href="https://nextjs.org">Jaynarol Live V1</a>
         </h1>
 
         <img src="/vercel.svg" alt="logo" />

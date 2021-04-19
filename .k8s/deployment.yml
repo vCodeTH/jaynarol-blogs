@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jaynarol-blogs
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jaynarol-blogs
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: jaynarol-blogs
+      namespace: dev
+    spec:
+      containers:
+        - name: jaynarol-blogs
+          image: asia.gcr.io/nova-dso/jaynarol-blogs:f231408daa695e7973a171fb90941a2ccc6eb297
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
