@@ -47,26 +47,33 @@ jobs:
             -Dsonar.coverage.exclusions=**/*.tsx,**/__test__/*,**/*.test.*,*.config.{js,json}
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
 
-      - name: Build NextJs
-        run: |-
-          npm run build
-
       - name: Connect GCP
         uses: google-github-actions/setup-gcloud@master
         with:
           project_id: ${{ env.GKE_PROJECT }}
           service_account_key: ${{ env.GKE_SA_KEY }}
-
-      - name: Pack Artifact
         run: |-
           gcloud --quiet auth configure-docker
           gcloud container clusters get-credentials "${{ env.GKE_CLUSTER }}" --zone "${{ env.GKE_ZONE }}"
+
+      - name: Build NextJs
+        run: |-
+          npm run build
+
+      - name: Pack Artifact
+        id: pack
+        run: |-
+          echo ::set-output name=IMAGE_NAME::"asia.gcr.io/${{ env.GKE_PROJECT }}/${{ env.SERVICE_NAME }}:$GITHUB_SHA"
           docker build \
-                    --tag "aisa.gcr.io/${{ env.GKE_PROJECT }}/${{ env.SERVICE_NAME }}:$GITHUB_SHA" \
+                    --tag ${{ steps.pack.outputs.IMAGE_NAME }} \
                     --build-arg GITHUB_SHA="$GITHUB_SHA" \
                     --build-arg GITHUB_REF="$GITHUB_REF" \
                     .
 
+      - name: Scan Artifact
+        run: |-
+          docker scan --accept-license --dependency-tree ${{ steps.pack.outputs.IMAGE_NAME }}
+
       - name: Ship Artifact to GCR
         run: |-
-          docker push "aisa.gcr.io/${{ env.GKE_PROJECT }}/${{ env.SERVICE_NAME }}:$GITHUB_SHA"
+          docker push ${{ steps.pack.outputs.IMAGE_NAME }}
