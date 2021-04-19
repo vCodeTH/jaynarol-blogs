@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: jaynarol-blogs
-          image: asia.gcr.io/nova-dso/jaynarol-blogs:f231408daa695e7973a171fb90941a2ccc6eb297
+          image: asia.gcr.io/PROJECT_ID/IMAGE:TAG
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
