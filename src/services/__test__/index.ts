@@ -36,7 +36,7 @@ describe('all functions', () => {
   describe('justDivideAllOfThem', () => {
     test('2/2 should be 1', () => {
       const numbers = [2, 2]
-      const expected = 0
+      const expected = 1
 
       expect(justDivideAllOfThem(...numbers)).toEqual(expected)
     })
