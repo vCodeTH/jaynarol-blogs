@@ -1,7 +1,7 @@
 blog:
   namespace: dev
   tag: dev
-  replicas: 2
+  replicas: 1
   portExternal: 80
   portInternal: 3000
   cpuReq: 100m
