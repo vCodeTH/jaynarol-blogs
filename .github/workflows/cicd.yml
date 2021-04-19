@@ -4,8 +4,12 @@ on:
   push:
     branches: [ main ]
 
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
 jobs:
-  Test:
+  Test-Scan:
     runs-on: ubuntu-latest
 
     steps:
@@ -34,11 +38,8 @@ jobs:
             -Dsonar.exclusions=node_modules/**/*,coverage/**/*,src/styles/**/*,src/public/**/*,**/__test__/**/*,**/*.test.*,*.config.{js,json}
             -Dsonar.coverage.exclusions=**/*.tsx,**/__test__/*,**/*.test.*,*.config.{js,json}
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-  Build:
+  Build-Pack:
     needs: Test
     runs-on: ubuntu-latest
 

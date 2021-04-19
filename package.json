@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint --ext js,jsx,ts,tsx --fix",
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "pack": "next start"
   },
   "dependencies": {
     "next": "10.1.3",
