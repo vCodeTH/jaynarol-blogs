@@ -48,13 +48,15 @@ jobs:
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
 
       - name: Build NextJs
+        id: build
         run: |-
+          echo ::set-output name=IMAGE_NAME::"asia.gcr.io/${{ env.GKE_PROJECT }}/${{ env.SERVICE_NAME }}:$GITHUB_SHA"
           npm run build
 
       - name: Pack Artifact
         run: |-
           docker build \
-                    --tag asia.gcr.io/${{ env.GKE_PROJECT }}/${{ env.SERVICE_NAME }}:$GITHUB_SHA \
+                    --tag ${{ steps.build.outputs.IMAGE_NAME }} \
                     --build-arg GITHUB_SHA="$GITHUB_SHA" \
                     --build-arg GITHUB_REF="$GITHUB_REF" \
                     .
@@ -62,7 +64,7 @@ jobs:
       - name: Scan Artifact
         uses: anchore/scan-action@v2
         with:
-          image: asia.gcr.io/${{ env.GKE_PROJECT }}/${{ env.SERVICE_NAME }}:$GITHUB_SHA
+          image: ${{ steps.build.outputs.IMAGE_NAME }}
           fail-build: true
           severity-cutoff: medium
 
@@ -76,4 +78,4 @@ jobs:
         run: |-
           gcloud --quiet auth configure-docker
           gcloud container clusters get-credentials "${{ env.GKE_CLUSTER }}" --zone "${{ env.GKE_ZONE }}"
-          docker push asia.gcr.io/${{ env.GKE_PROJECT }}/${{ env.SERVICE_NAME }}:$GITHUB_SHA
+          docker push ${{ steps.build.outputs.IMAGE_NAME }}
