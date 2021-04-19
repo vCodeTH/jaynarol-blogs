@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}
+  namespace:  {{ .Values.blog.namespace }}
+spec:
+  type: LoadBalancer
+  ports:
+    - port: {{ .Values.blog.portExternal }}
+      targetPort: {{ .Values.blog.portInternal }}
+  selector:
+    app: {{ .Release.Name }}

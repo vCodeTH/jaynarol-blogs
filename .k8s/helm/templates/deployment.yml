@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Values.blog.namespace }}
+spec:
+  replicas: {{ .Values.blog.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+      namespace: {{ .Values.blog.namespace }}
+    spec:
+      containers:
+        - name: {{ .Release.Name }}
+          image: {{ .Values.env.IMAGE }}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: {{ .Values.blog.portInternal }}
+              protocol: TCP
+          resources:
+            requests:
+              cpu: {{ .Values.blog.cpuReq }}
+              memory: {{ .Values.blog.memReq }}
+            limits:
+              cpu: {{ .Values.blog.cpuMax }}
+              memory: {{ .Values.blog.memMax }}

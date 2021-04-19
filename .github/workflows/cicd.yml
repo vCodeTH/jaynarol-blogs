@@ -6,7 +6,6 @@ on:
 
 env:
   SERVICE_NAME: jaynarol-blogs
-  DEPLOYMENT_NAME: jaynarol-blogs
 
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   PHONITO_TOKEN: ${{ secrets.PHONITO_TOKEN }}
@@ -90,10 +89,12 @@ jobs:
 
       - name: Deploy Artifact to GKE
         run: |-
-          cd .k8s
-          curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
-          chmod u+x ./kustomize
-          ./kustomize edit set image asia.gcr.io/PROJECT_ID/IMAGE:TAG=${{ steps.build.outputs.IMAGE_NAME }}
-          ./kustomize build . | kubectl apply -f .
-          kubectl rollout status deployment/${{ env.DEPLOYMENT_NAME }}
-          kubectl get services -o wide
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
+
+          helm upgrade ${{ env.SERVICE_NAME }} \
+                .k8s/helm \
+                -f .k8s/helm-values/jaynarol-blogs-dev.yaml \
+                --set env.IMAGE=${{ steps.build.outputs.IMAGE_NAME }} \
+                .

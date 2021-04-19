@@ -1,0 +1,10 @@
+blog:
+  namespace: dev
+  tag: dev
+  replicas: 2
+  portExternal: 80
+  portInternal: 3000
+  cpuReq: 100m
+  cpuMax: 200m
+  memReq: 128Mi
+  memMax: 256Mi
