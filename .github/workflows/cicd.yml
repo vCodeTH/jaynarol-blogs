@@ -9,7 +9,7 @@ env:
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
 jobs:
-  TestScan:
+  Test-Scan:
     runs-on: ubuntu-latest
 
     steps:
@@ -39,8 +39,8 @@ jobs:
             -Dsonar.coverage.exclusions=**/*.tsx,**/__test__/*,**/*.test.*,*.config.{js,json}
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
 
-  BuildPack:
-    needs: Test
+  Build-Pack:
+    needs: Test-Scan
     runs-on: ubuntu-latest
 
     steps:
