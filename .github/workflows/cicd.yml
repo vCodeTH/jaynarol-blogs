@@ -5,11 +5,12 @@ on:
     branches: [ main ]
 
 env:
-  SERVICE_NAME: jaynarol-blogs
-
+  // static
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
+  // custom
+  SERVICE_NAME: jaynarol-blogs
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
   GKE_SA_KEY: ${{ secrets.GKE_SA_KEY }}
   GKE_CLUSTER: ${{ secrets.GKE_CLUSTER }}
@@ -52,18 +53,16 @@ jobs:
           npm run build
 
       - name: Pack Artifact
-        id: pack
         run: |-
-          echo ::set-output name=IMAGE_NAME::"asia.gcr.io/${{ env.GKE_PROJECT }}/${{ env.SERVICE_NAME }}:$GITHUB_SHA"
           docker build \
-                    --tag ${{ steps.pack.outputs.IMAGE_NAME }} \
+                    --tag "asia.gcr.io/${{ env.GKE_PROJECT }}/${{ env.SERVICE_NAME }}:$GITHUB_SHA" \
                     --build-arg GITHUB_SHA="$GITHUB_SHA" \
                     --build-arg GITHUB_REF="$GITHUB_REF" \
                     .
 
       - name: Scan Artifact
         run: |-
-          docker scan --accept-license --dependency-tree ${{ steps.pack.outputs.IMAGE_NAME }}
+          docker scan --accept-license --dependency-tree "asia.gcr.io/${{ env.GKE_PROJECT }}/${{ env.SERVICE_NAME }}:$GITHUB_SHA"
 
       - name: Connect GCP
         uses: google-github-actions/setup-gcloud@master
@@ -75,4 +74,4 @@ jobs:
         run: |-
           gcloud --quiet auth configure-docker
           gcloud container clusters get-credentials "${{ env.GKE_CLUSTER }}" --zone "${{ env.GKE_ZONE }}"
-          docker push ${{ steps.pack.outputs.IMAGE_NAME }}
+          docker push "asia.gcr.io/${{ env.GKE_PROJECT }}/${{ env.SERVICE_NAME }}:$GITHUB_SHA"
