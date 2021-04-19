@@ -60,8 +60,9 @@ jobs:
                     .
 
       - name: Scan Artifact
-        run: |-
-          docker scan --accept-license --dependency-tree "asia.gcr.io/${{ env.GKE_PROJECT }}/${{ env.SERVICE_NAME }}:$GITHUB_SHA"
+        uses: Azure/container-scan@v0
+        with:
+          image-name: asia.gcr.io/${{ env.GKE_PROJECT }}/${{ env.SERVICE_NAME }}:$GITHUB_SHA
 
       - name: Connect GCP
         uses: google-github-actions/setup-gcloud@master
@@ -73,4 +74,4 @@ jobs:
         run: |-
           gcloud --quiet auth configure-docker
           gcloud container clusters get-credentials "${{ env.GKE_CLUSTER }}" --zone "${{ env.GKE_ZONE }}"
-          docker push "asia.gcr.io/${{ env.GKE_PROJECT }}/${{ env.SERVICE_NAME }}:$GITHUB_SHA"
+          docker push asia.gcr.io/${{ env.GKE_PROJECT }}/${{ env.SERVICE_NAME }}:$GITHUB_SHA
