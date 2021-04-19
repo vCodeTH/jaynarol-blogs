@@ -10,15 +10,13 @@ const IndexPage: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <strong>Jaynarol Live V2</strong>
-        </h1>
-
-        <img src="/vercel.svg" alt="logo" />
+        <h1 className={styles.title}>Welcome to Jaynarol Live V3</h1>
 
         <p className={styles.description}>
           Get started by editing <code className={styles.code}>pages/index.js</code>
         </p>
+
+        <img src="/vercel.svg" alt="logo" />
 
         <div className={styles.grid}>
           <a href="https://nextjs.org/docs" className={styles.card}>
