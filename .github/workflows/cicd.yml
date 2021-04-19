@@ -11,8 +11,9 @@ env:
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
-  GKE_SA_EMAIL: ${{ secrets.GKE_SA_EMAIL }}
   GKE_SA_KEY: ${{ secrets.GKE_SA_KEY }}
+  GKE_CLUSTER: ${{ secrets.GKE_CLUSTER }}
+  GKE_ZONE: ${{ secrets.GKE_ZONE }}
 
 jobs:
   CI-CD-Flow:
@@ -30,7 +31,9 @@ jobs:
           node-version: 15.x
 
       - name: Test with Jest
-        run: npm ci && npm test
+        run: |-
+          npm ci
+          npm test
 
       - name: Sonar Scan
         uses: sonarsource/sonarcloud-github-action@master
@@ -45,18 +48,25 @@ jobs:
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
 
       - name: Build NextJs
-        run: npm run build
+        run: |-
+          npm run build
 
       - name: Connect GCP
         uses: google-github-actions/setup-gcloud@master
         with:
-          version: '286.0.0'
           project_id: ${{ env.GKE_PROJECT }}
-          service_account_email: ${{ env.GKE_SA_EMAIL }}
           service_account_key: ${{ env.GKE_SA_KEY }}
 
       - name: Pack Artifact
         run: |-
-          gcloud builds submit \
-            --quiet \
-            --tag 'asia.gcr.io/${{ env.GKE_PROJECT }}/${{ env.SERVICE_NAME }}:$GITHUB_SHA'
+          gcloud --quiet auth configure-docker
+          gcloud container clusters get-credentials "${{ env.GKE_CLUSTER }}" --zone "${{ env.GKE_ZONE }}"
+          docker build \
+                    --tag "aisa.gcr.io/${{ env.GKE_PROJECT }}/${{ env.SERVICE_NAME }}:$GITHUB_SHA" \
+                    --build-arg GITHUB_SHA="$GITHUB_SHA" \
+                    --build-arg GITHUB_REF="$GITHUB_REF" \
+                    .
+
+      - name: Ship Artifact to GCR
+        run: |-
+          docker push "aisa.gcr.io/${{ env.GKE_PROJECT }}/${{ env.SERVICE_NAME }}:$GITHUB_SHA"
