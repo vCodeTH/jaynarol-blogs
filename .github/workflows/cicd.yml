@@ -6,10 +6,8 @@ on:
 
 env:
   SERVICE_NAME: jaynarol-blogs
-
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
+  PHONITO_TOKEN: ${{ secrets.PHONITO_TOKEN }}
   GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
   GKE_SA_KEY: ${{ secrets.GKE_SA_KEY }}
   GKE_CLUSTER: ${{ secrets.GKE_CLUSTER }}
@@ -37,6 +35,8 @@ jobs:
 
       - name: Scan Source with Sonar
         uses: sonarsource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           args: >
             -Dsonar.organization=vcodeth
@@ -62,11 +62,10 @@ jobs:
                     .
 
       - name: Scan Artifact
-        uses: anchore/scan-action@v2
+        uses: phonito/phonito-scanner-action@master
         with:
           image: ${{ steps.build.outputs.IMAGE_NAME }}
-          fail-build: false
-          acs-report-enable: true
+          phonito-token: '${{ env.PHONITO_TOKEN }}'
 
       - name: Connect GCP
         uses: google-github-actions/setup-gcloud@master
